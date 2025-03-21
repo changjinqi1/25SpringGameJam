@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System.Collections.Generic;
 
 public class Collect : MonoBehaviour
 {
@@ -27,6 +26,7 @@ public class Collect : MonoBehaviour
             if (rb != null) rb.isKinematic = true; // Make it unaffected by gravity
             other.transform.SetParent(transform); // Make the ball of yarn follow the player
 
+
             Debug.Log("Collected Yarn Ball! Total: " + collectedYarnBalls.Count);
         }
     }
@@ -34,6 +34,7 @@ public class Collect : MonoBehaviour
     void UpdatePlayerHeight()
     {
         // Adjust the player's height based on the number of balls of yarn
+
         float newY = collectedYarnBalls.Count * yarnHeight;
         transform.position = new Vector3(transform.position.x, newY, transform.position.z);
     }
@@ -41,12 +42,14 @@ public class Collect : MonoBehaviour
     void PositionYarnBalls()
     {
         // Arrange the balls of yarn in order to create an effect of raising the cat.
+
         for (int i = 0; i < collectedYarnBalls.Count; i++)
         {
             Vector3 newPos = playerBase.position + new Vector3(0, i * yarnHeight, 0);
             collectedYarnBalls[i].transform.position = newPos;
         }
     }
+
 
     // Removing Yarn Balls
     public void RemoveYarnBall()
