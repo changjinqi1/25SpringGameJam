@@ -1,26 +1,27 @@
 using UnityEngine;
 
-public class PlayerOrbitRB : MonoBehaviour
+public class PlayerOrbitRigidbody : MonoBehaviour
 {
-    public Transform stick;             // Center object
-    public float radius = 2f;           // Distance from stick
-    public float orbitSpeed = 100f;     // Degrees per second
-    private float currentAngle = 0f;    // Current angle around stick
-    private int direction = 1;          // 1 = clockwise, -1 = counterclockwise
-    private Rigidbody2D rb;
+    public Transform stick;            // The round stick to orbit around
+    public float orbitSpeed = 5f;      // Speed of orbit movement
+    public float radius = 2f;          // Distance from stick center
+    private int direction = 1;         // 1 for clockwise, -1 for counterclockwise
+
+    private Rigidbody rb;
+    private float currentAngle = 0f;
 
     void Start()
     {
-        rb = GetComponent<Rigidbody2D>();
+        rb = GetComponent<Rigidbody>();
 
-        // Calculate initial angle based on position
-        Vector2 dir = transform.position - stick.position;
-        currentAngle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
+        // Initial angle based on player's position relative to stick
+        Vector3 offset = transform.position - stick.position;
+        currentAngle = Mathf.Atan2(offset.y, offset.x) * Mathf.Rad2Deg;
     }
 
     void Update()
     {
-        // Flip direction on Space key
+        // Change direction on Space key press
         if (Input.GetKeyDown(KeyCode.Space))
         {
             direction *= -1;
@@ -29,20 +30,23 @@ public class PlayerOrbitRB : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (stick == null) return;
+        if (stick == null || rb == null) return;
 
-        // Update angle
-        currentAngle += direction * orbitSpeed * Time.fixedDeltaTime;
-        currentAngle = currentAngle % 360f;
+        // Update angle based on speed, direction, and time
+        currentAngle += direction * orbitSpeed;
+
+        // Keep angle within 0-360
+        currentAngle %= 360f;
 
         // Calculate new position
         float rad = currentAngle * Mathf.Deg2Rad;
-        Vector2 newPos = new Vector2(
-            stick.position.x + Mathf.Cos(rad) * radius,
-            stick.position.y + Mathf.Sin(rad) * radius
-        );
+        Vector3 offset = new Vector3(Mathf.Cos(rad), Mathf.Sin(rad), 0) * radius;
+        Vector3 targetPos = stick.position + offset;
 
-        // Move Rigidbody
-        rb.MovePosition(newPos);
+        // Move Rigidbody to target position
+        rb.MovePosition(targetPos);
+
+        // Optional: Face outward from the center
+        rb.MoveRotation(Quaternion.LookRotation(Vector3.forward, offset.normalized));
     }
 }
