@@ -33,9 +33,6 @@ public class Collect : MonoBehaviour
 
     void UpdatePlayerHeight()
     {
-
-        // ����ë��������������Ҹ߶�
-
         // Adjust the player's height based on the number of balls of yarn
 
         float newY = collectedYarnBalls.Count * yarnHeight;
@@ -44,9 +41,6 @@ public class Collect : MonoBehaviour
 
     void PositionYarnBalls()
     {
-
-        // ��������ë�����γ�һ����è��ߵ�Ч��
-
         // Arrange the balls of yarn in order to create an effect of raising the cat.
 
         for (int i = 0; i < collectedYarnBalls.Count; i++)
@@ -62,8 +56,6 @@ public class Collect : MonoBehaviour
     {
         if (collectedYarnBalls.Count > 0)
         {
-
-            //
             //Remove from the bottom
             GameObject removedBall = collectedYarnBalls[0];
             collectedYarnBalls.RemoveAt(0);
