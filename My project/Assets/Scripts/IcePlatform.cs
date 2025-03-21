@@ -8,28 +8,40 @@ public class IcePlatform : MonoBehaviour
     public float boostDuration = 2f; // Duration of the speed boost in seconds
 
     [Header("Player Settings")]
-    public Rigidbody2D playerRigidbody; // Reference to the player's Rigidbody2D
     public float baseSpeed = 5f; // Player's normal speed
+
+    private Coroutine boostCoroutine;
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
         // Check if the player stepped on the platform
-        if (collision.gameObject.CompareTag("Player") && playerRigidbody != null)
+        if (collision.gameObject.CompareTag("Player"))
         {
-            // Stop any existing boost coroutine before starting a new one
-            StopAllCoroutines();
-            StartCoroutine(SpeedBoost());
+            Rigidbody2D playerRb = collision.gameObject.GetComponent<Rigidbody2D>();
+
+            if (playerRb != null)
+            {
+                // Stop any existing coroutine running on this script
+                if (boostCoroutine != null)
+                {
+                    StopCoroutine(boostCoroutine);
+                }
+
+                boostCoroutine = StartCoroutine(SpeedBoost(playerRb));
+            }
         }
     }
 
-    private IEnumerator SpeedBoost()
+    private IEnumerator SpeedBoost(Rigidbody2D playerRb)
     {
-        float boostedSpeed = baseSpeed * speedMultiplier; // Calculate new speed
-        playerRigidbody.velocity = new Vector2(boostedSpeed * Mathf.Sign(playerRigidbody.velocity.x), playerRigidbody.velocity.y);
+        float boostedSpeed = baseSpeed * speedMultiplier;
 
-        yield return new WaitForSeconds(boostDuration); // Wait for the boost duration
+        // Apply boosted speed
+        playerRb.velocity = new Vector2(boostedSpeed * Mathf.Sign(playerRb.velocity.x), playerRb.velocity.y);
 
-        // Reset speed after boost time ends
-        playerRigidbody.velocity = new Vector2(baseSpeed * Mathf.Sign(playerRigidbody.velocity.x), playerRigidbody.velocity.y);
+        yield return new WaitForSeconds(boostDuration);
+
+        // Reset to base speed
+        playerRb.velocity = new Vector2(baseSpeed * Mathf.Sign(playerRb.velocity.x), playerRb.velocity.y);
     }
 }
