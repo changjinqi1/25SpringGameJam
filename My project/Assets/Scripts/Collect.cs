@@ -5,25 +5,25 @@ using System.Collections.Generic;
 
 public class Collect : MonoBehaviour
 {
-    public Transform playerBase; // 玩家脚下的基础点
-    public float yarnHeight = 1f; // 每个毛线球的高度
-    private List<GameObject> collectedYarnBalls = new List<GameObject>(); // 存储已收集的毛线球
+    public Transform playerBase; // The base point under the player's feet
+    public float yarnHeight = 1f; // The height of each ball of yarn
+    private List<GameObject> collectedYarnBalls = new List<GameObject>(); // yarn balls list
 
     void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("YarnBall")) // 毛线球！！！！！！！打Tag！！！！！！！！！！！！！！！！！！！！
+        if (other.CompareTag("YarnBall")) // tag of yarn balls
         {
-            // 增加玩家高度
+            // Increase player height
             collectedYarnBalls.Add(other.gameObject);
             UpdatePlayerHeight();
 
-            // 让毛线球移动到玩家脚下
+            // Move the ball of yarn to the player's feet
             PositionYarnBalls();
 
-            // 关闭毛线球的物理影响，让它跟随玩家
+            // Turn off the physics of the ball of yarn so it follows the player
             Rigidbody rb = other.GetComponent<Rigidbody>();
-            if (rb != null) rb.isKinematic = true; // 让它不受重力影响
-            other.transform.SetParent(transform); // 让毛线球跟随玩家移动
+            if (rb != null) rb.isKinematic = true; // Make it unaffected by gravity
+            other.transform.SetParent(transform); // Make the ball of yarn follow the player
 
             Debug.Log("Collected Yarn Ball! Total: " + collectedYarnBalls.Count);
         }
@@ -31,14 +31,14 @@ public class Collect : MonoBehaviour
 
     void UpdatePlayerHeight()
     {
-        // 根据毛线球数量调整玩家高度
+        // Adjust the player's height based on the number of balls of yarn
         float newY = collectedYarnBalls.Count * yarnHeight;
         transform.position = new Vector3(transform.position.x, newY, transform.position.z);
     }
 
     void PositionYarnBalls()
     {
-        // 依次排列毛线球，形成一个把猫垫高的效果
+        // Arrange the balls of yarn in order to create an effect of raising the cat.
         for (int i = 0; i < collectedYarnBalls.Count; i++)
         {
             Vector3 newPos = playerBase.position + new Vector3(0, i * yarnHeight, 0);
@@ -46,12 +46,12 @@ public class Collect : MonoBehaviour
         }
     }
 
-    // 移除毛线球
+    // Removing Yarn Balls
     public void RemoveYarnBall()
     {
         if (collectedYarnBalls.Count > 0)
         {
-            //从最下面开始移除
+            //Remove from the bottom
             GameObject removedBall = collectedYarnBalls[0];
             collectedYarnBalls.RemoveAt(0);
             Destroy(removedBall);

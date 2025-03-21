@@ -10,7 +10,7 @@ public class ScoreDisplay : MonoBehaviour
     {
         if (catTransform != null && scoreText != null)
         {
-            int score = Mathf.FloorToInt(catTransform.position.y); // È¡Õû
+            int score = Mathf.FloorToInt(catTransform.position.y); // full number
             scoreText.text = score.ToString(); 
         }
     }
