@@ -2,11 +2,12 @@ using UnityEngine;
 
 public class PlayerOrbitWithGravityAndCollision : MonoBehaviour
 {
-    public Transform stick;            // 柱子
-    public float orbitSpeed = 2f;      // 旋转速度 (弧度/秒)
-    public float radius = 2f;          // 围绕柱子半径
-    private int direction = 1;         // 方向：1 = 顺时针, -1 = 逆时针
+    public Transform stick;             // 柱子
+    public float orbitSpeed = 2f;       // 旋转速度 (弧度/秒)
+    public float radius = 2f;           // 围绕柱子半径
+    public float maxOrbitSpeed = 3f;    // 最大旋转速度
 
+    private int direction = 1;          // 方向：1 = 顺时针, -1 = 逆时针
     private Rigidbody rb;
     private float currentAngle = 0f;
 
@@ -32,6 +33,9 @@ public class PlayerOrbitWithGravityAndCollision : MonoBehaviour
     {
         if (stick == null || rb == null) return;
 
+        // Clamp the orbitSpeed to maxOrbitSpeed
+        orbitSpeed = Mathf.Min(orbitSpeed, maxOrbitSpeed);
+
         // 更新角度
         currentAngle += direction * orbitSpeed * Time.fixedDeltaTime;
 
@@ -47,7 +51,7 @@ public class PlayerOrbitWithGravityAndCollision : MonoBehaviour
 
         // 朝向柱子中心 (可选)
         Vector3 lookDir = (stick.position - transform.position);
-        lookDir.y = 0f; // 保证水平面朝向
+        lookDir.y = 0f;
         if (lookDir != Vector3.zero)
         {
             Quaternion targetRot = Quaternion.LookRotation(lookDir, Vector3.up);
