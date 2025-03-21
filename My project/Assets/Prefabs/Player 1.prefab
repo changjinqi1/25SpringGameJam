@@ -151,6 +151,7 @@ MonoBehaviour:
   stick: {fileID: 0}
   orbitSpeed: 1
   radius: 6
+  maxOrbitSpeed: 3
 --- !u!114 &-1612570933976128418
 MonoBehaviour:
   m_ObjectHideFlags: 0
