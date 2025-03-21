@@ -1,11 +1,11 @@
 using UnityEngine;
 
-public class PlayerOrbitWithGravity : MonoBehaviour
+public class PlayerOrbitWithGravityAndCollision : MonoBehaviour
 {
     public Transform stick;            // 柱子
     public float orbitSpeed = 2f;      // 旋转速度 (弧度/秒)
-    public float radius = 2f;          // 距离柱子的半径
-    private int direction = 1;         // 1=顺时针, -1=逆时针
+    public float radius = 2f;          // 围绕柱子半径
+    private int direction = 1;         // 方向：1 = 顺时针, -1 = 逆时针
 
     private Rigidbody rb;
     private float currentAngle = 0f;
@@ -14,7 +14,7 @@ public class PlayerOrbitWithGravity : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
 
-        // 初始角度
+        // 初始角度，根据起始位置
         Vector3 offset = transform.position - stick.position;
         currentAngle = Mathf.Atan2(offset.z, offset.x);
     }
@@ -35,19 +35,19 @@ public class PlayerOrbitWithGravity : MonoBehaviour
         // 更新角度
         currentAngle += direction * orbitSpeed * Time.fixedDeltaTime;
 
-        // 计算目标 XZ 位置
+        // 计算新的 XZ 位置
         Vector3 offset = new Vector3(Mathf.Cos(currentAngle), 0, Mathf.Sin(currentAngle)) * radius;
         Vector3 targetXZ = stick.position + offset;
 
-        // 保留当前 Y 轴高度，保持受重力影响
+        // 保留 Rigidbody 的 Y 轴 (重力控制)
         Vector3 targetPosition = new Vector3(targetXZ.x, rb.position.y, targetXZ.z);
 
-        // 使用 Rigidbody.MovePosition 只调整 XZ
+        // 移动刚体
         rb.MovePosition(targetPosition);
 
-        // 让玩家朝向柱子中心 (可选)
-        Vector3 lookDir = (stick.position - transform.position).normalized;
-        lookDir.y = 0f; // 保证朝向平面
+        // 朝向柱子中心 (可选)
+        Vector3 lookDir = (stick.position - transform.position);
+        lookDir.y = 0f; // 保证水平面朝向
         if (lookDir != Vector3.zero)
         {
             Quaternion targetRot = Quaternion.LookRotation(lookDir, Vector3.up);
