@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 3354923670746980873}
   - component: {fileID: 6328684999828907219}
   - component: {fileID: 2906619630294540302}
+  - component: {fileID: -1612570933976128418}
   m_Layer: 0
   m_Name: Player 1
   m_TagString: Player
@@ -150,6 +151,20 @@ MonoBehaviour:
   stick: {fileID: 0}
   orbitSpeed: 1
   radius: 6
+--- !u!114 &-1612570933976128418
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1604505398115152146}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 71cd275eed121ce4fbbf3d3090d46678, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerBase: {fileID: 0}
+  yarnHeight: 1
 --- !u!1 &1714247076702754612
 GameObject:
   m_ObjectHideFlags: 0

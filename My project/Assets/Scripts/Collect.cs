@@ -9,6 +9,8 @@ public class Collect : MonoBehaviour
     public float yarnHeight = 1f; // The height of each ball of yarn
     private List<GameObject> collectedYarnBalls = new List<GameObject>(); // yarn balls list
 
+
+
     void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("YarnBall")) // tag of yarn balls
