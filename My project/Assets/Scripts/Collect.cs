@@ -5,25 +5,25 @@ using System.Collections.Generic;
 
 public class Collect : MonoBehaviour
 {
-    public Transform playerBase; // Íæ¼Ò½ÅÏÂµÄ»ù´¡µã
-    public float yarnHeight = 1f; // Ã¿¸öÃ«ÏßÇòµÄ¸ß¶È
-    private List<GameObject> collectedYarnBalls = new List<GameObject>(); // ´æ´¢ÒÑÊÕ¼¯µÄÃ«ÏßÇò
+    public Transform playerBase; // ï¿½ï¿½Ò½ï¿½ï¿½ÂµÄ»ï¿½ï¿½ï¿½ï¿½ï¿½
+    public float yarnHeight = 1f; // Ã¿ï¿½ï¿½Ã«ï¿½ï¿½ï¿½ï¿½Ä¸ß¶ï¿½
+    private List<GameObject> collectedYarnBalls = new List<GameObject>(); // ï¿½æ´¢ï¿½ï¿½ï¿½Õ¼ï¿½ï¿½ï¿½Ã«ï¿½ï¿½ï¿½ï¿½
 
     void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("YarnBall")) // Ã«ÏßÇò£¡£¡£¡£¡£¡£¡£¡´òTag£¡£¡£¡£¡£¡£¡£¡£¡£¡£¡£¡£¡£¡£¡£¡£¡£¡£¡£¡£¡
+        if (other.CompareTag("YarnBall")) // Ã«ï¿½ï¿½ï¿½ò£¡£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Tagï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         {
-            // Ôö¼ÓÍæ¼Ò¸ß¶È
+            // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò¸ß¶ï¿½
             collectedYarnBalls.Add(other.gameObject);
             UpdatePlayerHeight();
 
-            // ÈÃÃ«ÏßÇòÒÆ¶¯µ½Íæ¼Ò½ÅÏÂ
+            // ï¿½ï¿½Ã«ï¿½ï¿½ï¿½ï¿½ï¿½Æ¶ï¿½ï¿½ï¿½ï¿½ï¿½Ò½ï¿½ï¿½ï¿½
             PositionYarnBalls();
 
-            // ¹Ø±ÕÃ«ÏßÇòµÄÎïÀíÓ°Ïì£¬ÈÃËü¸úËæÍæ¼Ò
+            // ï¿½Ø±ï¿½Ã«ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó°ï¿½ì£¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
             Rigidbody rb = other.GetComponent<Rigidbody>();
-            if (rb != null) rb.isKinematic = true; // ÈÃËü²»ÊÜÖØÁ¦Ó°Ïì
-            other.transform.SetParent(transform); // ÈÃÃ«ÏßÇò¸úËæÍæ¼ÒÒÆ¶¯
+            if (rb != null) rb.isKinematic = true; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó°ï¿½ï¿½
+            other.transform.SetParent(transform); // ï¿½ï¿½Ã«ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ¶ï¿½
 
             Debug.Log("Collected Yarn Ball! Total: " + collectedYarnBalls.Count);
         }
@@ -31,14 +31,14 @@ public class Collect : MonoBehaviour
 
     void UpdatePlayerHeight()
     {
-        // ¸ù¾ÝÃ«ÏßÇòÊýÁ¿µ÷ÕûÍæ¼Ò¸ß¶È
+        // ï¿½ï¿½ï¿½ï¿½Ã«ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò¸ß¶ï¿½
         float newY = collectedYarnBalls.Count * yarnHeight;
         transform.position = new Vector3(transform.position.x, newY, transform.position.z);
     }
 
     void PositionYarnBalls()
     {
-        // ÒÀ´ÎÅÅÁÐÃ«ÏßÇò£¬ÐÎ³ÉÒ»¸ö°ÑÃ¨µæ¸ßµÄÐ§¹û
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã«ï¿½ï¿½ï¿½ï¿½ï¿½Î³ï¿½Ò»ï¿½ï¿½ï¿½ï¿½Ã¨ï¿½ï¿½ßµï¿½Ð§ï¿½ï¿½
         for (int i = 0; i < collectedYarnBalls.Count; i++)
         {
             Vector3 newPos = playerBase.position + new Vector3(0, i * yarnHeight, 0);
@@ -46,12 +46,12 @@ public class Collect : MonoBehaviour
         }
     }
 
-    // ÒÆ³ýÃ«ÏßÇò
+    // ï¿½Æ³ï¿½Ã«ï¿½ï¿½ï¿½ï¿½
     public void RemoveYarnBall()
     {
         if (collectedYarnBalls.Count > 0)
         {
-            //´Ó×îÏÂÃæ¿ªÊ¼ÒÆ³ý
+            //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½æ¿ªÊ¼ï¿½Æ³ï¿½
             GameObject removedBall = collectedYarnBalls[0];
             collectedYarnBalls.RemoveAt(0);
             Destroy(removedBall);
