@@ -6,6 +6,17 @@ public class Collect : MonoBehaviour
 {
     public Transform playerBase; // The base point under the player's feet
     public float yarnHeight = 1f; // The height of each ball of yarn
+    private float basePlayerY;
+    private Rigidbody rb;
+
+
+    void Start()
+    {
+        basePlayerY = transform.position.y;
+        rb = GetComponent<Rigidbody>();
+    }
+
+
     private List<GameObject> collectedYarnBalls = new List<GameObject>(); // yarn balls list
 
 
@@ -16,37 +27,51 @@ public class Collect : MonoBehaviour
         {
             // Increase player height
             collectedYarnBalls.Add(other.gameObject);
-            UpdatePlayerHeight();
+            Rigidbody rb = other.GetComponent<Rigidbody>();
+            if (rb != null) rb.isKinematic = true;
+
+
+            // Set the yarn ball as a child object of playerBase (very important)
+            other.transform.SetParent(playerBase);
+
+
 
             // Move the ball of yarn to the player's feet
             PositionYarnBalls();
 
-            // Turn off the physics of the ball of yarn so it follows the player
-            Rigidbody rb = other.GetComponent<Rigidbody>();
-            if (rb != null) rb.isKinematic = true; // Make it unaffected by gravity
-            other.transform.SetParent(transform); // Make the ball of yarn follow the player
 
 
             Debug.Log("Collected Yarn Ball! Total: " + collectedYarnBalls.Count);
         }
     }
 
-    void UpdatePlayerHeight()
-    {
-        // Adjust the player's height based on the number of balls of yarn
+    //void UpdatePlayerHeight()
+    //{
+    // Adjust the player's height based on the number of balls of yarn
 
-        float newY = collectedYarnBalls.Count * yarnHeight;
-        transform.position = new Vector3(transform.position.x, newY, transform.position.z);
+    //   float newY = collectedYarnBalls.Count * yarnHeight;
+    // transform.position = new Vector3(transform.position.x, newY, transform.position.z);
+    //}
+
+
+
+    // Player Position update
+    void FixedUpdate()
+    {
+        float offsetY = collectedYarnBalls.Count * yarnHeight;
+        Vector3 targetPosition = new Vector3(rb.position.x, basePlayerY + offsetY, rb.position.z);
+        rb.MovePosition(targetPosition);
     }
+
+
 
     void PositionYarnBalls()
     {
-        // Arrange the balls of yarn in order to create an effect of raising the cat.
-
         for (int i = 0; i < collectedYarnBalls.Count; i++)
         {
-            Vector3 newPos = playerBase.position + new Vector3(0, i * yarnHeight, 0);
-            collectedYarnBalls[i].transform.position = newPos;
+            GameObject yarnBall = collectedYarnBalls[i];
+            Vector3 localOffset = new Vector3(0, -((i + 1) * yarnHeight), 0); // ÏòÏÂµþ
+            yarnBall.transform.localPosition = playerBase.localPosition + localOffset;
         }
     }
 
@@ -56,13 +81,11 @@ public class Collect : MonoBehaviour
     {
         if (collectedYarnBalls.Count > 0)
         {
-            //Remove from the bottom
-            GameObject removedBall = collectedYarnBalls[0];
+            GameObject removed = collectedYarnBalls[0];
             collectedYarnBalls.RemoveAt(0);
-            Destroy(removedBall);
+            Destroy(removed);
 
-            UpdatePlayerHeight();
-            PositionYarnBalls();
+            PositionYarnBalls(); 
         }
     }
 
