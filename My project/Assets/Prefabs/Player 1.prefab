@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 2595492260453758510}
   - component: {fileID: 3162759457921291155}
   - component: {fileID: 840731268770327958}
+  - component: {fileID: 4663676384057388818}
   m_Layer: 0
   m_Name: SpriteVisual
   m_TagString: Untagged
@@ -106,6 +107,18 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &4663676384057388818
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1470014829734703728}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2f09f93f3ddc04f41bd1b58bb58d2b5f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1604505398115152146
 GameObject:
   m_ObjectHideFlags: 0
@@ -120,7 +133,7 @@ GameObject:
   - component: {fileID: 3354923670746980873}
   - component: {fileID: 6328684999828907219}
   - component: {fileID: 2906619630294540302}
-  - component: {fileID: -1612570933976128418}
+  - component: {fileID: 1501218186503851064}
   m_Layer: 0
   m_Name: Player 1
   m_TagString: Player
@@ -257,14 +270,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: af6f4750bda2c404d8243ccc729b5dc5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  stick: {fileID: 1793403706767200131, guid: f47a39554e1ed3146ae2e083bc0c90f0, type: 3}
+  stick: {fileID: 0}
   orbitSpeed: 1
   maxOrbitSpeed: 3
   radius: 6
   fallSpeed: 1.5
   maxFallSpeed: 5
   spriteVisual: {fileID: 2595492260453758510}
---- !u!114 &-1612570933976128418
+--- !u!114 &1501218186503851064
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -273,12 +286,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 1604505398115152146}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 71cd275eed121ce4fbbf3d3090d46678, type: 3}
+  m_Script: {fileID: 11500000, guid: d40dce511d909444d8185fde8c290665, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   playerBase: {fileID: 8805678514772995981}
   yarnHeight: 1
   playerBodyHeight: 2
+  teleportDuration: 0.5
+  clearEffect: {fileID: 0}
 --- !u!1 &1714247076702754612
 GameObject:
   m_ObjectHideFlags: 0

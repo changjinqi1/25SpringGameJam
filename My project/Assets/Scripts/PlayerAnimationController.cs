@@ -5,21 +5,36 @@ using UnityEngine;
 public class PlayerAnimationController : MonoBehaviour
 {
     private Animator animator;
+    private TESTcollect collectScript;
 
     void Start()
     {
-        animator = GetComponentInChildren<Animator>();
+        animator = GetComponent<Animator>();
+        collectScript = GetComponentInParent<TESTcollect>();
+    }
+
+    void Update()
+    {
+        if (collectScript != null && animator != null)
+        {
+            int count = collectScript.GetYarnBallCount();
+            animator.SetInteger("yarnBallCount", count);
+        }
     }
 
     public void OnYarnCollected()
     {
-        
-        animator.SetTrigger("DoJump");
+        if (animator != null)
+        {
+            animator.SetTrigger("DoJump");
+        }
     }
 
     public void OnYarnListEmpty()
     {
-        
-        animator.Play("PlayerRun");
+        if (animator != null)
+        {
+            animator.SetInteger("yarnBallCount", 0);
+        }
     }
 }

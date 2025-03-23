@@ -7,13 +7,17 @@ public class TESTcollect : MonoBehaviour
     public Transform playerBase;
     public float yarnHeight = 1f;
     public float playerBodyHeight = 2f;
+    public float teleportDuration = 0.5f;
+
+    public ParticleSystem clearEffect; // ✅ 粒子特效
 
     private float basePlayerY;
     private Rigidbody rb;
     private List<GameObject> collectedYarnBalls = new List<GameObject>();
     private BoxCollider detectCollider;
-
     private PlayerOrbit playerOrbit;
+    private Collider currentPlatform = null;
+    private bool isFalling = false;
 
     void Start()
     {
@@ -31,7 +35,6 @@ public class TESTcollect : MonoBehaviour
             Debug.LogError("YarnStackTrigger (BoxCollider) not found!");
         }
 
-        // 获取 PlayerOrbit 脚本
         playerOrbit = GetComponent<PlayerOrbit>();
         if (playerOrbit == null)
         {
@@ -44,12 +47,63 @@ public class TESTcollect : MonoBehaviour
         if (other.CompareTag("YarnBall"))
         {
             CollectYarnBall(other.gameObject);
-
             GetComponentInChildren<PlayerAnimationController>()?.OnYarnCollected();
         }
-        else if (other.CompareTag("Wall"))
+
+        if (other.CompareTag("Wall"))
         {
-            CheckWallHeightAndRemoveBalls(other);
+            Vector3 direction = transform.position - other.ClosestPoint(transform.position);
+            float verticalFactor = Vector3.Dot(direction.normalized, Vector3.up);
+
+            if (verticalFactor > 0.5f)
+            {
+                // 脚下踩平台
+                float platformTopY = other.bounds.max.y;
+                basePlayerY = platformTopY + 1.5f;
+                currentPlatform = other;
+                isFalling = false;
+
+                Debug.Log("Stepped on new platform. BasePlayerY set to: " + basePlayerY);
+            }
+            else if (verticalFactor < -0.5f)
+            {
+                // 撞头
+                Debug.Log("Head bumped into ceiling!");
+
+                if (collectedYarnBalls.Count > 0)
+                {
+                    RemoveYarnBall();
+                    basePlayerY -= yarnHeight;
+                    Debug.Log("Removed one yarn ball due to head bump.");
+                }
+            }
+            else
+            {
+                // 侧面撞墙
+                CheckWallHeightAndRemoveBalls(other);
+            }
+        }
+    }
+
+    void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Wall") && other == currentPlatform)
+        {
+            currentPlatform = null;
+            isFalling = true;
+            Debug.Log("Left platform. Falling...");
+        }
+    }
+
+    void FixedUpdate()
+    {
+        if (isFalling) return;
+
+        if (collectedYarnBalls.Count > 0)
+        {
+            float offsetY = collectedYarnBalls.Count * yarnHeight;
+            Vector3 targetPosition = new Vector3(rb.position.x, basePlayerY + offsetY, rb.position.z);
+            rb.MovePosition(targetPosition);
         }
     }
 
@@ -77,16 +131,6 @@ public class TESTcollect : MonoBehaviour
         Debug.Log("Collected Yarn Ball! Total: " + collectedYarnBalls.Count);
     }
 
-    void FixedUpdate()
-    {
-        if (collectedYarnBalls.Count > 0)
-        {
-            float offsetY = collectedYarnBalls.Count * yarnHeight;
-            Vector3 targetPosition = new Vector3(rb.position.x, basePlayerY + offsetY, rb.position.z);
-            rb.MovePosition(targetPosition);
-        }
-    }
-
     void PositionYarnBalls()
     {
         for (int i = 0; i < collectedYarnBalls.Count; i++)
@@ -109,19 +153,17 @@ public class TESTcollect : MonoBehaviour
             UpdateDetectCollider();
         }
 
-
-        //ball = 0 animation
         if (collectedYarnBalls.Count == 0)
         {
             GetComponentInChildren<PlayerAnimationController>()?.OnYarnListEmpty();
         }
     }
-
     public bool HasYarnBalls()
     {
         return collectedYarnBalls.Count > 0;
-    }                                               
+    }
 
+  
 
     void UpdateDetectCollider()
     {
@@ -136,9 +178,8 @@ public class TESTcollect : MonoBehaviour
 
     void CheckWallHeightAndRemoveBalls(Collider wallCollider)
     {
-        Debug.Log("Hit Wall: " + wallCollider.gameObject.name);
+        Debug.Log("Side hit Wall: " + wallCollider.gameObject.name);
 
-        // Remove all yarn balls
         int totalBalls = collectedYarnBalls.Count;
         if (totalBalls > 0)
         {
@@ -147,40 +188,20 @@ public class TESTcollect : MonoBehaviour
             {
                 RemoveYarnBall();
             }
+
+            // ✅ 播放粒子特效
+            if (clearEffect != null)
+            {
+                clearEffect.Play();
+            }
         }
 
-        // Find child TeleportPoint
         Transform teleportPoint = wallCollider.transform.Find("TeleportPoint");
 
         if (teleportPoint != null)
         {
             Vector3 targetPos = teleportPoint.position;
-
-            // Disable collider temporarily
-            Collider playerCollider = GetComponent<Collider>();
-            if (playerCollider != null) playerCollider.enabled = false;
-
-            // Lock orbit
-            if (playerOrbit != null)
-            {
-                playerOrbit.LockOrbit(true);
-            }
-
-            // Move player to TeleportPoint position
-            rb.position = targetPos;
-            Debug.Log("Moved player to TeleportPoint at: " + targetPos);
-
-            // Update orbit angle
-            if (playerOrbit != null)
-            {
-                playerOrbit.SetCurrentAngle(rb.position);
-            }
-
-            // Optional: Adjust basePlayerY if needed (depending on how FixedUpdate adjusts Y)
-            basePlayerY = targetPos.y;
-
-            // Delay re-enable collider and orbit
-            StartCoroutine(ReenableOrbit(0.1f));
+            StartCoroutine(SmoothTeleport(targetPos));
         }
         else
         {
@@ -188,20 +209,56 @@ public class TESTcollect : MonoBehaviour
         }
     }
 
+    IEnumerator SmoothTeleport(Vector3 targetPos)
+    {
+        Collider playerCollider = GetComponent<Collider>();
+
+        // Disable collider + lock orbit
+        if (playerCollider != null) playerCollider.enabled = false;
+        if (playerOrbit != null) playerOrbit.LockOrbit(true);
+
+        Vector3 startPos = rb.position;
+        float elapsed = 0f;
+
+        while (elapsed < teleportDuration)
+        {
+            elapsed += Time.deltaTime;
+            float t = elapsed / teleportDuration;
+
+            Vector3 newPos = Vector3.Lerp(startPos, targetPos, t);
+            rb.MovePosition(newPos);
+
+            yield return null;
+        }
+
+        rb.MovePosition(targetPos);
+
+        if (playerOrbit != null)
+        {
+            playerOrbit.SetCurrentAngle(targetPos);
+        }
+
+        basePlayerY = targetPos.y;
+        isFalling = false;
+        currentPlatform = null;
+
+        StartCoroutine(ReenableOrbit(0.1f));
+    }
+
     IEnumerator ReenableOrbit(float delay)
     {
         yield return new WaitForSeconds(delay);
 
-        if (playerOrbit != null)
-        {
-            playerOrbit.LockOrbit(false);
-        }
+        if (playerOrbit != null) playerOrbit.LockOrbit(false);
 
         Collider playerCollider = GetComponent<Collider>();
-        if (playerCollider != null)
-        {
-            playerCollider.enabled = true;
-        }
+        if (playerCollider != null) playerCollider.enabled = true;
     }
 
+
+    //int animator condition
+    public int GetYarnBallCount()
+    {
+        return collectedYarnBalls.Count;
+    }
 }

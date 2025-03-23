@@ -7,11 +7,10 @@ public class CameraFollowUpOnly : MonoBehaviour
     public Transform stick;
     public float radius = 5f;
     public float yOffset = 3f;
-    public float smoothSpeed = 5f;
-    public string nextSceneName; //  场景名在 Inspector 设置
+    public string nextSceneName;
+    public AudioSource deathSound;
 
-    // 音效变量
-    public AudioSource deathSound; // 在Inspector中分配
+    private bool cameraReady = false;
     private float lastPlayerY;
 
     void Start()
@@ -28,44 +27,54 @@ public class CameraFollowUpOnly : MonoBehaviour
     {
         if (player == null || stick == null) return;
 
-        // 1️⃣ 同步角度
+        // 1️⃣ Orbit position (horizontal)
         Vector3 playerOffset = player.position - stick.position;
         float playerAngle = Mathf.Atan2(playerOffset.z, playerOffset.x);
         Vector3 offset = new Vector3(Mathf.Cos(playerAngle), 0, Mathf.Sin(playerAngle)) * radius;
         Vector3 targetXZ = stick.position + offset;
 
-        // 2️⃣ Y轴向上跟随
-        float targetY = transform.position.y;
-        if (player.position.y > lastPlayerY)
+        // 2️⃣ Y-axis: only move up
+        float currentTargetY = transform.position.y;
+        float desiredY = player.position.y + yOffset;
+
+        if (desiredY > currentTargetY || !cameraReady)
         {
-            targetY = Mathf.Lerp(transform.position.y, player.position.y + yOffset, smoothSpeed * Time.deltaTime);
+            currentTargetY = desiredY;
         }
+
+        // Enable camera tracking after first snap
+        if (!cameraReady)
+        {
+            cameraReady = true;
+        }
+
+        // Apply position
+        transform.position = new Vector3(targetXZ.x, currentTargetY, targetXZ.z);
         lastPlayerY = player.position.y;
 
-        transform.position = new Vector3(targetXZ.x, targetY, targetXZ.z);
-
-        // 3️⃣ LookAt
-        Vector3 lookDir = (stick.position - transform.position);
+        // 3️⃣ Rotate to face stick
+        Vector3 lookDir = stick.position - transform.position;
         lookDir.y = 0f;
         if (lookDir != Vector3.zero)
         {
             transform.rotation = Quaternion.LookRotation(lookDir, Vector3.up);
         }
 
-        // 4️⃣ 玩家死亡检测
-        Vector3 playerViewportPos = Camera.main.WorldToViewportPoint(player.position);
-        if (playerViewportPos.y < 0f)
+        // 4️⃣ Death check: player fell off screen
+        if (cameraReady)
         {
-            HandlePlayerDeath();
+            Vector3 playerViewportPos = Camera.main.WorldToViewportPoint(player.position);
+            if (playerViewportPos.y < 0f)
+            {
+                HandlePlayerDeath();
+            }
         }
     }
-
 
     void HandlePlayerDeath()
     {
         Debug.Log("Player Dead! Loading next scene...");
 
-        // 播放死亡音效
         if (deathSound != null)
         {
             deathSound.Play();
@@ -75,7 +84,6 @@ public class CameraFollowUpOnly : MonoBehaviour
     }
 
     public void LoadNextScene()
-
     {
         if (!string.IsNullOrEmpty(nextSceneName))
         {

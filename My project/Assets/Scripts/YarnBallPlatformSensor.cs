@@ -7,7 +7,7 @@ public class YarnBallPlatformSensor : MonoBehaviour
     public float groundCheckDistance = 0.2f;
     public float groundOffset = 0.05f;
 
-    public Collect collectScript; // 在游戏场景里找带有这个script的物体，也就是玩家。
+    public TESTcollect collectScript; // 在游戏场景里找带有这个script的物体，也就是玩家。
     private bool isTouchingPlatform = false;
     // YarnBallPlatformSensor.cs
 
@@ -19,10 +19,10 @@ public class YarnBallPlatformSensor : MonoBehaviour
         }
     }
 
-    private Collect FindClosestCollector()
+    private TESTcollect FindClosestCollector()
     {
-        Collect[] all = FindObjectsOfType<Collect>();
-        Collect closest = null;
+        TESTcollect[] all = FindObjectsOfType<TESTcollect>();
+        TESTcollect closest = null;
         float minDist = Mathf.Infinity;
 
         foreach (var col in all)
