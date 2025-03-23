@@ -81,6 +81,8 @@ public class CameraFollowUpOnly : MonoBehaviour
             deathSound.Play();
         }
 
+        PlayerPrefs.SetFloat("LastScore", player.position.y);
+
         StartCoroutine(DelayAndLoadNextScene(2f)); // 使用协程延迟 2 秒加载下一场景
     }
 
