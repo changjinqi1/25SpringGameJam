@@ -4,15 +4,21 @@ using UnityEngine;
 
 public class LevelTrigger : MonoBehaviour
 {
-    private bool triggered = false;
+    private bool hasTriggered = false;
+    private LevelGenerator levelGenerator;
 
-    private void OnTriggerEnter(Collider other)
+    void Start()
     {
-        if (!triggered && other.CompareTag("Player"))
+        levelGenerator = FindObjectOfType<LevelGenerator>();
+    }
+
+    void OnTriggerEnter(Collider other)
+    {
+        if (hasTriggered) return;
+        if (other.CompareTag("Player"))
         {
-            triggered = true;
-            FindObjectOfType<LevelGenerator>().SpawnNextLevel();
+            hasTriggered = true;
+            levelGenerator.SpawnNextLevel();
         }
     }
 }
-

@@ -1,42 +1,73 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class CameraFollowUpOnly : MonoBehaviour
 {
-    public Transform player;         // 玩家
-    public float smoothSpeed = 2f;   // 跟随平滑度
+    public Transform player;
+    public Transform stick;
+    public float radius = 5f;
+    public float yOffset = 3f;
+    public float smoothSpeed = 5f;
+    public string nextSceneName; // 🎯 场景名在 Inspector 设置
 
-    private float minY;              // 相机当前 Y 最低位置
+    private float lastPlayerY;
 
     void Start()
     {
-        if (player == null)
+        if (player == null || stick == null)
         {
-            Debug.LogError("Player not assigned!");
+            Debug.LogError("Player or Stick not assigned!");
         }
-        minY = transform.position.y; // 初始相机 Y 位置
+
+        lastPlayerY = player.position.y;
     }
 
     void LateUpdate()
     {
-        if (player == null) return;
+        if (player == null || stick == null) return;
 
-        Vector3 camPos = transform.position;
+        // 1️⃣ 同步角度
+        Vector3 playerOffset = player.position - stick.position;
+        float playerAngle = Mathf.Atan2(playerOffset.z, playerOffset.x);
+        Vector3 offset = new Vector3(Mathf.Cos(playerAngle), 0, Mathf.Sin(playerAngle)) * radius;
+        Vector3 targetXZ = stick.position + offset;
 
-        // 只考虑 Y 轴
-        if (player.position.y > camPos.y)
+        // 2️⃣ Y轴向上跟随
+        float targetY = transform.position.y;
+        if (player.position.y > lastPlayerY)
         {
-            camPos.y = Mathf.Lerp(camPos.y, player.position.y, smoothSpeed * Time.deltaTime);
-            minY = camPos.y; // 更新相机最低点
+            targetY = Mathf.Lerp(transform.position.y, player.position.y + yOffset, smoothSpeed * Time.deltaTime);
+        }
+        lastPlayerY = player.position.y;
+
+        transform.position = new Vector3(targetXZ.x, targetY, targetXZ.z);
+
+        // 3️⃣ LookAt
+        Vector3 lookDir = (stick.position - transform.position);
+        lookDir.y = 0f;
+        if (lookDir != Vector3.zero)
+        {
+            transform.rotation = Quaternion.LookRotation(lookDir, Vector3.up);
         }
 
-        transform.position = camPos;
-
-        // 检测玩家是否掉出屏幕底部
+        // 4️⃣ 玩家死亡检测
         Vector3 playerViewportPos = Camera.main.WorldToViewportPoint(player.position);
-
         if (playerViewportPos.y < 0f)
         {
-            Debug.Log("Player Dead! (Out of screen)");
+            Debug.Log("Player Dead! Loading next scene...");
+            LoadNextScene();
+        }
+    }
+
+    void LoadNextScene()
+    {
+        if (!string.IsNullOrEmpty(nextSceneName))
+        {
+            SceneManager.LoadScene(nextSceneName);
+        }
+        else
+        {
+            Debug.LogError("Next scene name not set in Inspector!");
         }
     }
 }
