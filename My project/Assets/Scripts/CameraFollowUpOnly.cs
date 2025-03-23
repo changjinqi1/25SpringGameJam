@@ -8,8 +8,10 @@ public class CameraFollowUpOnly : MonoBehaviour
     public float radius = 5f;
     public float yOffset = 3f;
     public float smoothSpeed = 5f;
-    public string nextSceneName; // 🎯 场景名在 Inspector 设置
+    public string nextSceneName; //  场景名在 Inspector 设置
 
+    // 音效变量
+    public AudioSource deathSound; // 在Inspector中分配
     private float lastPlayerY;
 
     void Start()
@@ -54,12 +56,26 @@ public class CameraFollowUpOnly : MonoBehaviour
         Vector3 playerViewportPos = Camera.main.WorldToViewportPoint(player.position);
         if (playerViewportPos.y < 0f)
         {
-            Debug.Log("Player Dead! Loading next scene...");
-            LoadNextScene();
+            HandlePlayerDeath();
         }
     }
 
-    void LoadNextScene()
+
+    void HandlePlayerDeath()
+    {
+        Debug.Log("Player Dead! Loading next scene...");
+
+        // 播放死亡音效
+        if (deathSound != null)
+        {
+            deathSound.Play();
+        }
+
+        LoadNextScene();
+    }
+
+    public void LoadNextScene()
+
     {
         if (!string.IsNullOrEmpty(nextSceneName))
         {

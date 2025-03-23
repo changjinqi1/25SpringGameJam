@@ -117,6 +117,12 @@ public class TESTcollect : MonoBehaviour
         }
     }
 
+    public bool HasYarnBalls()
+    {
+        return collectedYarnBalls.Count > 0;
+    }                                               
+
+
     void UpdateDetectCollider()
     {
         if (detectCollider != null)

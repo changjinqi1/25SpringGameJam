@@ -56,7 +56,7 @@ public class Collect : MonoBehaviour
 
             if (verticalFactor > 0.5f)
             {
-                // 从下往上撞击平台 = 脚下踩上平台
+                // 从上撞平台 = 踩上平台
                 float platformTopY = other.bounds.max.y;
                 basePlayerY = platformTopY + 1.5f;
                 currentPlatform = other;
@@ -66,7 +66,7 @@ public class Collect : MonoBehaviour
             }
             else if (verticalFactor < -0.5f)
             {
-                // 从上往下撞击平台 = 撞到头顶
+                //从下撞平台 = 撞到头顶
                 Debug.Log("Head bumped into ceiling!");
 
                 if (collectedYarnBalls.Count > 0)
