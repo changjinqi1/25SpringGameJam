@@ -77,7 +77,7 @@ public class PlayerOrbit : MonoBehaviour
         {
             direction *= -1;
 
-            
+
         }
     }
 

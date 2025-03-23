@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Collect : MonoBehaviour
+public class TESTcollect : MonoBehaviour
 {
     public Transform playerBase;
     public float yarnHeight = 1f;
@@ -14,10 +14,6 @@ public class Collect : MonoBehaviour
     private BoxCollider detectCollider;
 
     private PlayerOrbit playerOrbit;
-    private Collider currentPlatform = null;
-    private bool isFalling = false;
-    private Coroutine fallCheckCoroutine = null;
-
 
     void Start()
     {
@@ -35,6 +31,7 @@ public class Collect : MonoBehaviour
             Debug.LogError("YarnStackTrigger (BoxCollider) not found!");
         }
 
+        // 获取 PlayerOrbit 脚本
         playerOrbit = GetComponent<PlayerOrbit>();
         if (playerOrbit == null)
         {
@@ -47,49 +44,12 @@ public class Collect : MonoBehaviour
         if (other.CompareTag("YarnBall"))
         {
             CollectYarnBall(other.gameObject);
+
             GetComponentInChildren<PlayerAnimationController>()?.OnYarnCollected();
         }
-
-        if (other.CompareTag("Wall"))
+        else if (other.CompareTag("Wall"))
         {
-            Vector3 direction = transform.position - other.ClosestPoint(transform.position);
-            float verticalFactor = Vector3.Dot(direction.normalized, Vector3.up);
-
-            if (verticalFactor > 0.5f)
-            {
-                float platformTopY = other.bounds.max.y;
-                basePlayerY = platformTopY + 1.5f;
-                currentPlatform = other;
-                isFalling = false;
-
-                Debug.Log("Stepped on new platform. BasePlayerY set to: " + basePlayerY);
-            }
-            else
-            {
-                CheckWallHeightAndRemoveBalls(other);
-            }
-        }
-    }
-
-    void OnTriggerExit(Collider other)
-    {
-        if (other.CompareTag("Wall") && other == currentPlatform)
-        {
-            currentPlatform = null;
-            isFalling = true;
-            Debug.Log("Left platform. Falling...");
-        }
-    }
-
-    void FixedUpdate()
-    {
-        if (isFalling) return;
-
-        if (collectedYarnBalls.Count > 0)
-        {
-            float offsetY = collectedYarnBalls.Count * yarnHeight;
-            Vector3 targetPosition = new Vector3(rb.position.x, basePlayerY + offsetY, rb.position.z);
-            rb.MovePosition(targetPosition);
+            CheckWallHeightAndRemoveBalls(other);
         }
     }
 
@@ -117,6 +77,16 @@ public class Collect : MonoBehaviour
         Debug.Log("Collected Yarn Ball! Total: " + collectedYarnBalls.Count);
     }
 
+    void FixedUpdate()
+    {
+        if (collectedYarnBalls.Count > 0)
+        {
+            float offsetY = collectedYarnBalls.Count * yarnHeight;
+            Vector3 targetPosition = new Vector3(rb.position.x, basePlayerY + offsetY, rb.position.z);
+            rb.MovePosition(targetPosition);
+        }
+    }
+
     void PositionYarnBalls()
     {
         for (int i = 0; i < collectedYarnBalls.Count; i++)
@@ -139,6 +109,8 @@ public class Collect : MonoBehaviour
             UpdateDetectCollider();
         }
 
+
+        //ball = 0 animation
         if (collectedYarnBalls.Count == 0)
         {
             GetComponentInChildren<PlayerAnimationController>()?.OnYarnListEmpty();
@@ -160,6 +132,7 @@ public class Collect : MonoBehaviour
     {
         Debug.Log("Hit Wall: " + wallCollider.gameObject.name);
 
+        // Remove all yarn balls
         int totalBalls = collectedYarnBalls.Count;
         if (totalBalls > 0)
         {
@@ -170,24 +143,37 @@ public class Collect : MonoBehaviour
             }
         }
 
+        // Find child TeleportPoint
         Transform teleportPoint = wallCollider.transform.Find("TeleportPoint");
 
         if (teleportPoint != null)
         {
             Vector3 targetPos = teleportPoint.position;
 
+            // Disable collider temporarily
             Collider playerCollider = GetComponent<Collider>();
             if (playerCollider != null) playerCollider.enabled = false;
 
-            if (playerOrbit != null) playerOrbit.LockOrbit(true);
+            // Lock orbit
+            if (playerOrbit != null)
+            {
+                playerOrbit.LockOrbit(true);
+            }
 
+            // Move player to TeleportPoint position
             rb.position = targetPos;
             Debug.Log("Moved player to TeleportPoint at: " + targetPos);
 
-            if (playerOrbit != null) playerOrbit.SetCurrentAngle(rb.position);
+            // Update orbit angle
+            if (playerOrbit != null)
+            {
+                playerOrbit.SetCurrentAngle(rb.position);
+            }
 
+            // Optional: Adjust basePlayerY if needed (depending on how FixedUpdate adjusts Y)
             basePlayerY = targetPos.y;
 
+            // Delay re-enable collider and orbit
             StartCoroutine(ReenableOrbit(0.1f));
         }
         else
@@ -200,9 +186,16 @@ public class Collect : MonoBehaviour
     {
         yield return new WaitForSeconds(delay);
 
-        if (playerOrbit != null) playerOrbit.LockOrbit(false);
+        if (playerOrbit != null)
+        {
+            playerOrbit.LockOrbit(false);
+        }
 
         Collider playerCollider = GetComponent<Collider>();
-        if (playerCollider != null) playerCollider.enabled = true;
+        if (playerCollider != null)
+        {
+            playerCollider.enabled = true;
+        }
     }
+
 }
