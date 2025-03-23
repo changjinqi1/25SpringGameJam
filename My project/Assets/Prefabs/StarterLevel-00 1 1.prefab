@@ -4745,6 +4745,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Maopajia
       objectReference: {fileID: 0}
+    - target: {fileID: 3428037041498034144, guid: 2c45a9f8ac397354b9007b2bdf0dd51d, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8705555988187352676, guid: 2c45a9f8ac397354b9007b2bdf0dd51d, type: 3}
       propertyPath: m_LocalScale.x
       value: 1.2475

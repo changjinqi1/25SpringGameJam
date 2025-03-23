@@ -1,45 +1,35 @@
-using UnityEngine;
+﻿using UnityEngine;
 
-public class ParallaxScroll : MonoBehaviour
+public class ParallexScroll : MonoBehaviour
 {
-    public RectTransform[] layers;
-    public float[] speeds;
-    public float resetPosition = 1200f; 
-
-    private Vector3[] startPositions;
-    private int[] directions;
+    public float backgroundHeight = 10f; // 你的背景图的实际高度
+    private Camera mainCam;
 
     void Start()
     {
-        if (layers.Length != speeds.Length)
-        {
-            return;
-        }
-
-        startPositions = new Vector3[layers.Length];
-        directions = new int[layers.Length]; 
-
-        for (int i = 0; i < layers.Length; i++)
-        {
-            startPositions[i] = layers[i].anchoredPosition;
-            directions[i] = -1; 
-        }
+        mainCam = Camera.main;
     }
 
     void Update()
     {
-        for (int i = 0; i < layers.Length; i++)
-        {
-            layers[i].anchoredPosition += Vector2.right * speeds[i] * directions[i] * Time.deltaTime;
+        float cameraBottomY = mainCam.transform.position.y - mainCam.orthographicSize;
 
-            if (layers[i].anchoredPosition.x <= -resetPosition)
+        // 如果背景已经完全落在摄像机下方
+        if (transform.position.y + backgroundHeight < cameraBottomY)
+        {
+            // 找到所有背景图块
+            ParallexScroll[] allBackgrounds = FindObjectsOfType<ParallexScroll>();
+
+            float highestY = transform.position.y;
+
+            foreach (var bg in allBackgrounds)
             {
-                directions[i] = 1;
+                if (bg.transform.position.y > highestY)
+                    highestY = bg.transform.position.y;
             }
-            else if (layers[i].anchoredPosition.x >= resetPosition)
-            {
-                directions[i] = -1;
-            }
+
+            // 把当前背景移到最上面那个背景的正上方
+            transform.position = new Vector3(transform.position.x, highestY + backgroundHeight, transform.position.z);
         }
     }
 }
