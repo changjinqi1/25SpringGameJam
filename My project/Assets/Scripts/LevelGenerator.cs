@@ -17,6 +17,8 @@ public class LevelGenerator : MonoBehaviour
     private List<GameObject> levelBuffer = new List<GameObject>();
     private int levelsGenerated = 0;
     private Transform lastStickPoint;
+    private List<GameObject> last3Levels = new List<GameObject>();
+
 
     void Start()
     {
@@ -28,25 +30,27 @@ public class LevelGenerator : MonoBehaviour
             SpawnNextLevel();
         }
     }
-
     public void SpawnNextLevel()
     {
         GameObject prefabToSpawn;
+
+        // 固定高度单位
+        float levelHeight = 9.28408f;
 
         if (!firstLevelSpawned)
         {
             prefabToSpawn = startLevelPrefab;
             firstLevelSpawned = true;
 
-            GameObject levelInstance = Instantiate(prefabToSpawn, currentSpawnPosition, Quaternion.identity);
+            Vector3 spawnPos = Vector3.zero; // 起始关卡始终在 (0, 0, 0)
+            GameObject levelInstance = Instantiate(prefabToSpawn, spawnPos, Quaternion.identity);
 
-            // 定位关键点
+            // 设置起点和 StickPoint（如果仍需要）
             Transform startPoint = levelInstance.transform.Find("StartPoint");
             Transform stickPoint = levelInstance.transform.Find("StickPoint");
 
-            // 设置玩家起始位置
-            player.position = startPoint.position;
-            player.GetComponent<PlayerOrbit>().stick = stickPoint;
+            if (startPoint != null) player.position = startPoint.position;
+            if (stickPoint != null) player.GetComponent<PlayerOrbit>().stick = stickPoint;
 
             lastStickPoint = stickPoint;
         }
@@ -57,25 +61,27 @@ public class LevelGenerator : MonoBehaviour
                 ShuffleNewRound();
             }
 
-            prefabToSpawn = currentLevelPool.Dequeue();
+            // 选一个未在 last3Levels 中出现的 prefab
+            prefabToSpawn = GetNextValidLevel();
 
-            // 用 StickPoint 作为对齐位置
-            GameObject levelInstance = Instantiate(prefabToSpawn);
-            Transform newStartPoint = levelInstance.transform.Find("StartPoint");
+            // 计算生成位置
+            float spawnY = 9.28408f + levelsGenerated * levelHeight;
+            Vector3 spawnPos = new Vector3(0, spawnY, 0);
+
+            GameObject levelInstance = Instantiate(prefabToSpawn, spawnPos, Quaternion.identity);
+
+            // StickPoint 若仍用于玩家粘附点则保留
             Transform newStickPoint = levelInstance.transform.Find("StickPoint");
-
-            if (newStartPoint != null && lastStickPoint != null)
+            if (newStickPoint != null)
             {
-                Vector3 offset = lastStickPoint.position - newStartPoint.position;
-                levelInstance.transform.position += offset;
+                player.GetComponent<PlayerOrbit>().stick = newStickPoint;
+                lastStickPoint = newStickPoint;
             }
-
-            player.GetComponent<PlayerOrbit>().stick = newStickPoint;
-            lastStickPoint = newStickPoint;
         }
 
         levelsGenerated++;
     }
+
 
     void ShuffleNewRound()
     {
@@ -95,4 +101,38 @@ public class LevelGenerator : MonoBehaviour
             currentLevelPool.Enqueue(level);
         }
     }
+    private GameObject GetNextValidLevel()
+    {
+        GameObject prefabToSpawn = null;
+        int safety = 20;
+
+        while (safety-- > 0 && currentLevelPool.Count > 0)
+        {
+            GameObject candidate = currentLevelPool.Dequeue();
+            if (!last3Levels.Contains(candidate))
+            {
+                prefabToSpawn = candidate;
+                last3Levels.Add(candidate);
+                if (last3Levels.Count > 3)
+                    last3Levels.RemoveAt(0);
+                break;
+            }
+            else
+            {
+                currentLevelPool.Enqueue(candidate); // 放回末尾
+            }
+        }
+
+        // 如果实在找不到，就强制取一个
+        if (prefabToSpawn == null && currentLevelPool.Count > 0)
+        {
+            prefabToSpawn = currentLevelPool.Dequeue();
+            last3Levels.Add(prefabToSpawn);
+            if (last3Levels.Count > 3)
+                last3Levels.RemoveAt(0);
+        }
+
+        return prefabToSpawn;
+    }
+
 }
