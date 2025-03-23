@@ -18,7 +18,6 @@ public class Collect : MonoBehaviour
     private bool isFalling = false;
     private Coroutine fallCheckCoroutine = null;
 
-
     void Start()
     {
         basePlayerY = transform.position.y;
@@ -57,6 +56,7 @@ public class Collect : MonoBehaviour
 
             if (verticalFactor > 0.5f)
             {
+                // 从下往上撞击平台 = 脚下踩上平台
                 float platformTopY = other.bounds.max.y;
                 basePlayerY = platformTopY + 1.5f;
                 currentPlatform = other;
@@ -64,8 +64,25 @@ public class Collect : MonoBehaviour
 
                 Debug.Log("Stepped on new platform. BasePlayerY set to: " + basePlayerY);
             }
+            else if (verticalFactor < -0.5f)
+            {
+                // 从上往下撞击平台 = 撞到头顶
+                Debug.Log("Head bumped into ceiling!");
+
+                if (collectedYarnBalls.Count > 0)
+                {
+                    RemoveYarnBall();
+                    basePlayerY -= yarnHeight;
+                    Debug.Log("Removed one yarn ball due to head bump.");
+                }
+                else
+                {
+                    Debug.Log("No yarn balls to remove on head bump.");
+                }
+            }
             else
             {
+                // 其他方向碰撞处理，比如侧面撞墙
                 CheckWallHeightAndRemoveBalls(other);
             }
         }
