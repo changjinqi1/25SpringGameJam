@@ -8,7 +8,7 @@ public class CameraFollowUpOnly : MonoBehaviour
     public float radius = 5f;
     public float yOffset = 3f;
     public float smoothSpeed = 5f;
-    public string nextSceneName; // 🎯 场景名在 Inspector 设置
+    public string nextSceneName; //  场景名在 Inspector 设置
 
     // 音效变量
     public AudioSource deathSound; // 在Inspector中分配
@@ -60,6 +60,7 @@ public class CameraFollowUpOnly : MonoBehaviour
         }
     }
 
+
     void HandlePlayerDeath()
     {
         Debug.Log("Player Dead! Loading next scene...");
@@ -73,7 +74,8 @@ public class CameraFollowUpOnly : MonoBehaviour
         LoadNextScene();
     }
 
-    void LoadNextScene()
+    public void LoadNextScene()
+
     {
         if (!string.IsNullOrEmpty(nextSceneName))
         {

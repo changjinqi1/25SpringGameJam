@@ -8,15 +8,13 @@ public class RollingStoneHit : MonoBehaviour
     {
         GameObject hitObject = collision.collider.gameObject;
 
-        // hit player
         if (hitObject.CompareTag("Player"))
         {
             HandlePlayerHit(hitObject);
         }
-        // hit YarnBall
         else if (hitObject.CompareTag("YarnBall"))
         {
-            // find upper Player
+            // œÚ…œ’“ Player
             Transform current = hitObject.transform;
             while (current != null && !current.CompareTag("Player"))
             {
@@ -32,7 +30,7 @@ public class RollingStoneHit : MonoBehaviour
 
     void HandlePlayerHit(GameObject player)
     {
-        Collect collect = player.GetComponent<Collect>();
+        TESTcollect collect = player.GetComponent<TESTcollect>();
 
         if (collect != null)
         {
