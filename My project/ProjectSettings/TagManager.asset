@@ -7,6 +7,8 @@ TagManager:
   - YarnBall
   - Wall
   - Stair
+  - Bathtub
+  - Brush
   layers:
   - Default
   - TransparentFX
