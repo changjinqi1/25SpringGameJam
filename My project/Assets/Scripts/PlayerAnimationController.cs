@@ -13,14 +13,13 @@ public class PlayerAnimationController : MonoBehaviour
 
     public void OnYarnCollected()
     {
-        // Play JumpOnBall
+        
         animator.SetTrigger("DoJump");
-        animator.SetBool("HasYarn", true);
     }
 
     public void OnYarnListEmpty()
     {
-        // Play PlayerRun when have NO yarn ball
-        animator.SetBool("HasYarn", false);
+        
+        animator.Play("PlayerRun");
     }
 }

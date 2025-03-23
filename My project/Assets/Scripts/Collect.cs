@@ -13,7 +13,7 @@ public class Collect : MonoBehaviour
     private List<GameObject> collectedYarnBalls = new List<GameObject>();
     private BoxCollider detectCollider;
 
-    private PlayerOrbit playerOrbit; // 🔑 新增
+    private PlayerOrbit playerOrbit; 
 
     void Start()
     {
@@ -31,7 +31,7 @@ public class Collect : MonoBehaviour
             Debug.LogError("YarnStackTrigger (BoxCollider) not found!");
         }
 
-        // 🔑 获取 PlayerOrbit 脚本
+        // 获取 PlayerOrbit 脚本
         playerOrbit = GetComponent<PlayerOrbit>();
         if (playerOrbit == null)
         {
@@ -143,7 +143,7 @@ public class Collect : MonoBehaviour
             }
         }
 
-        // 🔥 Find child TeleportPoint
+        // Find child TeleportPoint
         Transform teleportPoint = wallCollider.transform.Find("TeleportPoint");
 
         if (teleportPoint != null)
