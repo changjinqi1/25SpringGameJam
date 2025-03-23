@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 6822963086940703244}
   m_Layer: 0
   m_Name: ICEPlatformUnit
-  m_TagString: Untagged
+  m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -120,5 +120,3 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speedMultiplier: 1.5
   boostDuration: 2
-  playerRigidbody: {fileID: 0}
-  baseSpeed: 5

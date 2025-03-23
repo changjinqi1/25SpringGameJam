@@ -13,7 +13,7 @@ public class Collect : MonoBehaviour
     private List<GameObject> collectedYarnBalls = new List<GameObject>();
     private BoxCollider detectCollider;
 
-    private PlayerOrbit playerOrbit; 
+    private PlayerOrbit playerOrbit;
 
     void Start()
     {

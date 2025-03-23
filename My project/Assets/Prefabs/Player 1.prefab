@@ -257,7 +257,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: af6f4750bda2c404d8243ccc729b5dc5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  stick: {fileID: 0}
+  stick: {fileID: 1905240178833435607, guid: 3f5754b915f740a4bbbbd3a5afe09431, type: 3}
   orbitSpeed: 1
   maxOrbitSpeed: 3
   radius: 6

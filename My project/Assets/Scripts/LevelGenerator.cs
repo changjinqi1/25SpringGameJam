@@ -1,5 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class LevelGenerator : MonoBehaviour
@@ -9,32 +8,22 @@ public class LevelGenerator : MonoBehaviour
     public List<GameObject> randomLevelPrefabs;
 
     [Header("Generation Settings")]
-    public Transform player;              
-    public float levelHeight = 5f;        // Height of each level prefab
-    public int preloadCount = 2;          // level number
+    public Transform player;
+    public int preloadCount = 2;
 
     private Vector3 currentSpawnPosition;
     private bool firstLevelSpawned = false;
     private Queue<GameObject> currentLevelPool = new Queue<GameObject>();
     private List<GameObject> levelBuffer = new List<GameObject>();
     private int levelsGenerated = 0;
+    private Transform lastStickPoint;
 
     void Start()
     {
         currentSpawnPosition = Vector3.zero;
 
-        // generate start prefab
-        SpawnNextLevel(); 
+        SpawnNextLevel();
         for (int i = 0; i < preloadCount; i++)
-        {
-            SpawnNextLevel(); 
-        }
-    }
-
-    void Update()
-    {
-        //generate next level
-        if (player.position.y + 10f >= currentSpawnPosition.y)
         {
             SpawnNextLevel();
         }
@@ -51,31 +40,40 @@ public class LevelGenerator : MonoBehaviour
 
             GameObject levelInstance = Instantiate(prefabToSpawn, currentSpawnPosition, Quaternion.identity);
 
-            // Find StartPoint and StickPoint in scene
+            // 定位关键点
             Transform startPoint = levelInstance.transform.Find("StartPoint");
             Transform stickPoint = levelInstance.transform.Find("StickPoint");
 
-            // set player pos, bound scene
+            // 设置玩家起始位置
             player.position = startPoint.position;
             player.GetComponent<PlayerOrbit>().stick = stickPoint;
+
+            lastStickPoint = stickPoint;
         }
         else
         {
-            // next round generation
             if (currentLevelPool.Count == 0)
             {
                 ShuffleNewRound();
             }
 
             prefabToSpawn = currentLevelPool.Dequeue();
-            GameObject levelInstance = Instantiate(prefabToSpawn, currentSpawnPosition, Quaternion.identity);
 
-            Transform stickPoint = levelInstance.transform.Find("StickPoint");
-            player.GetComponent<PlayerOrbit>().stick = stickPoint;
+            // 用 StickPoint 作为对齐位置
+            GameObject levelInstance = Instantiate(prefabToSpawn);
+            Transform newStartPoint = levelInstance.transform.Find("StartPoint");
+            Transform newStickPoint = levelInstance.transform.Find("StickPoint");
+
+            if (newStartPoint != null && lastStickPoint != null)
+            {
+                Vector3 offset = lastStickPoint.position - newStartPoint.position;
+                levelInstance.transform.position += offset;
+            }
+
+            player.GetComponent<PlayerOrbit>().stick = newStickPoint;
+            lastStickPoint = newStickPoint;
         }
 
-   
-        currentSpawnPosition += new Vector3(0, levelHeight, 0); // Stack Up
         levelsGenerated++;
     }
 
@@ -84,7 +82,6 @@ public class LevelGenerator : MonoBehaviour
         levelBuffer.Clear();
         levelBuffer.AddRange(randomLevelPrefabs);
 
-        
         for (int i = 0; i < levelBuffer.Count; i++)
         {
             GameObject temp = levelBuffer[i];
