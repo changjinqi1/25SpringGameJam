@@ -254,4 +254,11 @@ public class TESTcollect : MonoBehaviour
         Collider playerCollider = GetComponent<Collider>();
         if (playerCollider != null) playerCollider.enabled = true;
     }
+
+
+    //int animator condition
+    public int GetYarnBallCount()
+    {
+        return collectedYarnBalls.Count;
+    }
 }
