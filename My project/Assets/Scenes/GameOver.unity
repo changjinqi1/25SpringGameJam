@@ -377,10 +377,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   layers:
   - {fileID: 1142448782}
-  - {fileID: 2115568882}
   speeds:
   - 20
-  - 10
   resetPosition: 30
 --- !u!4 &519807286
 Transform:
