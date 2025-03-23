@@ -35,17 +35,15 @@ public class LevelGenerator : MonoBehaviour
         GameObject prefabToSpawn;
 
         // 固定高度单位
-        float levelHeight = 9.28408f;
-
+        float levelHeight = 2 * 9.28408f;
         if (!firstLevelSpawned)
         {
             prefabToSpawn = startLevelPrefab;
             firstLevelSpawned = true;
 
-            Vector3 spawnPos = Vector3.zero; // 起始关卡始终在 (0, 0, 0)
+            Vector3 spawnPos = new Vector3(0, 9.28408f, 0); // ✅ 向上偏移半个高度
             GameObject levelInstance = Instantiate(prefabToSpawn, spawnPos, Quaternion.identity);
 
-            // 设置起点和 StickPoint（如果仍需要）
             Transform startPoint = levelInstance.transform.Find("StartPoint");
             Transform stickPoint = levelInstance.transform.Find("StickPoint");
 
@@ -54,6 +52,7 @@ public class LevelGenerator : MonoBehaviour
 
             lastStickPoint = stickPoint;
         }
+
         else
         {
             if (currentLevelPool.Count == 0)
