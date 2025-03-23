@@ -111,3 +111,4 @@ MonoBehaviour:
   yOffset: 3
   smoothSpeed: 10
   nextSceneName: GameOver
+  deathSound: {fileID: 0}

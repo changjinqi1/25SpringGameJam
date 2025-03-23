@@ -280,7 +280,7 @@ MonoBehaviour:
   yarnHeight: 1
   playerBodyHeight: 2
   teleportDuration: 0.5
-  clearEffect: {fileID: 0}
+  clearEffect: {fileID: 7610399988346540249, guid: 2c2c83fbb14353b4d9763653236c279c, type: 3}
 --- !u!1 &1714247076702754612
 GameObject:
   m_ObjectHideFlags: 0
