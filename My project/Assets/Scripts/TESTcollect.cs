@@ -163,11 +163,7 @@ public class TESTcollect : MonoBehaviour
         return collectedYarnBalls.Count > 0;
     }
 
-    public bool HasYarnBalls()
-    {
-        return collectedYarnBalls.Count > 0;
-    }                                               
-
+  
 
     void UpdateDetectCollider()
     {
