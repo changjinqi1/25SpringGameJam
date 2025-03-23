@@ -97,6 +97,7 @@ GameObject:
   - component: {fileID: 4794074203785061840}
   - component: {fileID: 6581725247973958997}
   - component: {fileID: 3100510487587131145}
+  - component: {fileID: 3236030763350328757}
   - component: {fileID: 1682836909954081651}
   m_Layer: 0
   m_Name: RollingStone
@@ -207,10 +208,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   stick: {fileID: 0}
-  orbitSpeed: 3
+  orbitSpeed: 2
   radius: 6
   maxSpeed: 5
   yDrag: 1
+--- !u!114 &3236030763350328757
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9c7852c88ddc0044ca011c0b38d74699, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!54 &1682836909954081651
 Rigidbody:
   m_ObjectHideFlags: 0
