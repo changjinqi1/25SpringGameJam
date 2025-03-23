@@ -262,7 +262,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   backgroundHeight: 10
   parallaxFactor: 0.8
-  backgroundPrefab: {fileID: 0}
+  backgroundPrefab: {fileID: 1780965463}
 --- !u!1 &680117006
 GameObject:
   m_ObjectHideFlags: 0

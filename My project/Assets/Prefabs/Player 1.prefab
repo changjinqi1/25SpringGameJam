@@ -239,7 +239,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1604505398115152146}
   serializedVersion: 4
-  m_Mass: 1
+  m_Mass: 10
   m_Drag: 0
   m_AngularDrag: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -275,7 +275,7 @@ MonoBehaviour:
   maxOrbitSpeed: 3
   radius: 6
   fallSpeed: 1.5
-  maxFallSpeed: 5
+  maxFallSpeed: 10
   spriteVisual: {fileID: 2595492260453758510}
 --- !u!114 &1501218186503851064
 MonoBehaviour:
