@@ -17,6 +17,15 @@ public class PlayerOrbit : MonoBehaviour
     private bool isLocked = false;      // Lock orbit control externally
     private bool onStair = false;       // Is player currently on stair
 
+
+
+    private float lastYRotation = 0f;
+    public Transform spriteVisual;
+
+
+
+
+
     // External call to lock/unlock orbit (used when snapping to platform)
     public void LockOrbit(bool state)
     {
@@ -42,10 +51,33 @@ public class PlayerOrbit : MonoBehaviour
 
     void Update()
     {
+        float currentY = transform.eulerAngles.y;
+
+        float delta = Mathf.DeltaAngle(lastYRotation, currentY);
+
+        if (spriteVisual != null)
+        {
+            if (delta > 0.1f)
+            {
+                // 正在逆时针旋转（朝左）
+                spriteVisual.localEulerAngles = new Vector3(0f, 0f, 0f);
+            }
+            else if (delta < -0.1f)
+            {
+                // 正在顺时针旋转（朝右）
+                spriteVisual.localEulerAngles = new Vector3(0f, -180f, 0f);
+            }
+        }
+
+        // 更新上一帧角度
+        lastYRotation = currentY;
+
         // Press space to reverse direction
         if (Input.GetKeyDown(KeyCode.Space))
         {
             direction *= -1;
+
+            
         }
     }
 

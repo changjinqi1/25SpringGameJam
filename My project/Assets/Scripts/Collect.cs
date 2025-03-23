@@ -44,6 +44,8 @@ public class Collect : MonoBehaviour
         if (other.CompareTag("YarnBall"))
         {
             CollectYarnBall(other.gameObject);
+
+            GetComponentInChildren<PlayerAnimationController>()?.OnYarnCollected();
         }
         else if (other.CompareTag("Wall"))
         {
@@ -105,6 +107,13 @@ public class Collect : MonoBehaviour
 
             PositionYarnBalls();
             UpdateDetectCollider();
+        }
+
+
+        //ball = 0 animation
+        if (collectedYarnBalls.Count == 0)
+        {
+            GetComponentInChildren<PlayerAnimationController>()?.OnYarnListEmpty();
         }
     }
 
