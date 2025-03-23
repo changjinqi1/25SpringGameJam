@@ -1,3 +1,4 @@
+using System.Collections; // 确保包含此命名空间
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -73,13 +74,19 @@ public class CameraFollowUpOnly : MonoBehaviour
 
     void HandlePlayerDeath()
     {
-        Debug.Log("Player Dead! Loading next scene...");
+        Debug.Log("Player Dead! Playing death sound and loading next scene...");
 
         if (deathSound != null)
         {
             deathSound.Play();
         }
 
+        StartCoroutine(DelayAndLoadNextScene(2f)); // 使用协程延迟 2 秒加载下一场景
+    }
+
+    private IEnumerator DelayAndLoadNextScene(float delay)
+    {
+        yield return new WaitForSeconds(delay);
         LoadNextScene();
     }
 
