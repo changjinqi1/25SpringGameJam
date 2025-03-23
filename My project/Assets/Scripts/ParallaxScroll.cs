@@ -1,45 +1,50 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class ParallaxScroll : MonoBehaviour
 {
-    public RectTransform[] layers;
-    public float[] speeds;
-    public float resetPosition = 1200f; 
+    public float backgroundHeight = 10f;       // 背景图块的高度
+    public float parallaxFactor = 0.8f;        // 背景移动速率，相对于摄像机。越小越慢（0.5 = 半速）
+    public GameObject backgroundPrefab;        // 背景 prefab，用于生成新的图块
 
-    private Vector3[] startPositions;
-    private int[] directions;
+    private Camera mainCam;
+    private float lastCamY;
+    private Transform camTransform;
 
     void Start()
     {
-        if (layers.Length != speeds.Length)
-        {
-            return;
-        }
-
-        startPositions = new Vector3[layers.Length];
-        directions = new int[layers.Length]; 
-
-        for (int i = 0; i < layers.Length; i++)
-        {
-            startPositions[i] = layers[i].anchoredPosition;
-            directions[i] = -1; 
-        }
+        mainCam = Camera.main;
+        camTransform = mainCam.transform;
+        lastCamY = camTransform.position.y;
     }
 
     void Update()
     {
-        for (int i = 0; i < layers.Length; i++)
-        {
-            layers[i].anchoredPosition += Vector2.right * speeds[i] * directions[i] * Time.deltaTime;
+        float camY = camTransform.position.y;
+        float deltaY = camY - lastCamY;
 
-            if (layers[i].anchoredPosition.x <= -resetPosition)
-            {
-                directions[i] = 1;
-            }
-            else if (layers[i].anchoredPosition.x >= resetPosition)
-            {
-                directions[i] = -1;
-            }
+        // 视差移动：跟随摄像机但略慢
+        transform.position += new Vector3(0, deltaY * parallaxFactor, 0);
+        lastCamY = camY;
+
+        // 如果摄像机已经上升到超过该背景顶端，就生成新的背景图块
+        float backgroundTopY = transform.position.y + backgroundHeight / 2f;
+        float cameraTopY = camY + mainCam.orthographicSize;
+
+        if (cameraTopY > backgroundTopY)
+        {
+            SpawnNextBackground();
         }
+    }
+
+    void SpawnNextBackground()
+    {
+        // 防止重复生成
+        if (GameObject.Find("Background_" + (transform.position.y + backgroundHeight)) != null)
+            return;
+
+        // 创建新的背景图块
+        Vector3 newPos = new Vector3(transform.position.x, transform.position.y + backgroundHeight, transform.position.z);
+        GameObject newBackground = Instantiate(backgroundPrefab, newPos, Quaternion.identity);
+        newBackground.name = "Background_" + newPos.y;
     }
 }
