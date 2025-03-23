@@ -109,6 +109,5 @@ MonoBehaviour:
   stick: {fileID: 0}
   radius: 10
   yOffset: 3
-  smoothSpeed: 10
   nextSceneName: GameOver
   deathSound: {fileID: 0}
