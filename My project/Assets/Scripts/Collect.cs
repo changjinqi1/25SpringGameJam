@@ -8,6 +8,10 @@ public class Collect : MonoBehaviour
     public float yarnHeight = 1f;
     public float playerBodyHeight = 2f;
 
+    // 添加音效变量
+    public AudioSource collectSound; // 收集音效
+    public AudioSource removeSound;  // 移除音效
+
     private float basePlayerY;
     private Rigidbody rb;
     private List<GameObject> collectedYarnBalls = new List<GameObject>();
@@ -114,6 +118,12 @@ public class Collect : MonoBehaviour
     {
         collectedYarnBalls.Add(yarnBall);
 
+        // 播放收集音效
+        if (collectSound != null)
+        {
+            collectSound.Play();
+        }
+
         Rigidbody yarnRb = yarnBall.GetComponent<Rigidbody>();
         if (yarnRb != null) yarnRb.isKinematic = true;
 
@@ -151,6 +161,12 @@ public class Collect : MonoBehaviour
             GameObject removed = collectedYarnBalls[collectedYarnBalls.Count - 1];
             collectedYarnBalls.RemoveAt(collectedYarnBalls.Count - 1);
             Destroy(removed);
+
+            // 播放移除音效
+            if (removeSound != null)
+            {
+                removeSound.Play();
+            }
 
             PositionYarnBalls();
             UpdateDetectCollider();
