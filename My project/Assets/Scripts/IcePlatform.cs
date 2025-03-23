@@ -13,7 +13,7 @@ public class IcePlatform : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Player"))
         {
-            PlayerOrbitWithGravityAndCollision orbitScript = collision.gameObject.GetComponent<PlayerOrbitWithGravityAndCollision>();
+            PlayerOrbit orbitScript = collision.gameObject.GetComponent<PlayerOrbit>();
 
             if (orbitScript != null)
             {
@@ -25,7 +25,7 @@ public class IcePlatform : MonoBehaviour
         }
     }
 
-    private IEnumerator SpeedBoost(PlayerOrbitWithGravityAndCollision playerOrbit)
+    private IEnumerator SpeedBoost(PlayerOrbit playerOrbit)
     {
         float originalSpeed = playerOrbit.orbitSpeed;
 

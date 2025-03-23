@@ -57,7 +57,7 @@ public class LevelGenerator : MonoBehaviour
 
             // set player pos, bound scene
             player.position = startPoint.position;
-            player.GetComponent<PlayerOrbitWithGravityAndCollision>().stick = stickPoint;
+            player.GetComponent<PlayerOrbit>().stick = stickPoint;
         }
         else
         {
@@ -71,7 +71,7 @@ public class LevelGenerator : MonoBehaviour
             GameObject levelInstance = Instantiate(prefabToSpawn, currentSpawnPosition, Quaternion.identity);
 
             Transform stickPoint = levelInstance.transform.Find("StickPoint");
-            player.GetComponent<PlayerOrbitWithGravityAndCollision>().stick = stickPoint;
+            player.GetComponent<PlayerOrbit>().stick = stickPoint;
         }
 
    

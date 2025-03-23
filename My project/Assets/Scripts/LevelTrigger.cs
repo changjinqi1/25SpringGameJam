@@ -18,7 +18,7 @@ public class LevelTrigger : MonoBehaviour
             Transform stickPoint = transform.root.Find("StickPoint");
 
             // Let the player bind the new column
-            other.GetComponent<PlayerOrbitWithGravityAndCollision>().stick = stickPoint;
+            other.GetComponent<PlayerOrbit>().stick = stickPoint;
 
             // Tell the LevelGenerator to generate the next level
             FindObjectOfType<LevelGenerator>().SpawnNextLevel();

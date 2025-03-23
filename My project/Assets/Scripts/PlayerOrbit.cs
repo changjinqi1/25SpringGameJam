@@ -1,30 +1,48 @@
 using UnityEngine;
 
-public class PlayerOrbitWithGravityAndCollision : MonoBehaviour
+public class PlayerOrbit : MonoBehaviour
 {
-    public Transform stick;             // 柱子
-    public float orbitSpeed = 2f;       // 旋转速度 (弧度/秒)
-    public float maxOrbitSpeed = 3f;    // 最大旋转速度
-    public float radius = 2f;           // 围绕柱子的半径
-    public LayerMask obstacleLayers;    // 可检测的障碍物层
-    public float obstacleRayDistance = 0.6f; // 检测距离
+    public Transform stick;             // The central stick
+    public float orbitSpeed = 2f;       // Orbit speed
+    public float maxOrbitSpeed = 3f;    // Max orbit speed
+    public float radius = 2f;           // Orbit radius
 
-    private int direction = 1;          // 1 = 顺时针，-1 = 逆时针
+    public float fallSpeed = 2f;        // Falling speed
+    public float maxFallSpeed = 5f;     // Max fall speed
+
+    private int direction = 1;          // Orbit direction
     private Rigidbody rb;
     private float currentAngle = 0f;
+    private bool collided = false;
+    private bool isLocked = false;      // Lock orbit control externally
+    private bool onStair = false;       // Is player currently on stair
+
+    // External call to lock/unlock orbit (used when snapping to platform)
+    public void LockOrbit(bool state)
+    {
+        isLocked = state;
+    }
+
+    // External call to reset orbit angle
+    public void SetCurrentAngle(Vector3 playerPosition)
+    {
+        Vector3 offset = playerPosition - stick.position;
+        currentAngle = Mathf.Atan2(offset.z, offset.x);
+    }
 
     void Start()
     {
         rb = GetComponent<Rigidbody>();
+        rb.constraints = RigidbodyConstraints.FreezeRotation;
 
-        // 计算初始角度
+        // Initialize orbit angle
         Vector3 offset = transform.position - stick.position;
         currentAngle = Mathf.Atan2(offset.z, offset.x);
     }
 
     void Update()
     {
-        // 按空格切换方向
+        // Press space to reverse direction
         if (Input.GetKeyDown(KeyCode.Space))
         {
             direction *= -1;
@@ -33,30 +51,40 @@ public class PlayerOrbitWithGravityAndCollision : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (stick == null || rb == null) return;
+        if (stick == null || rb == null || isLocked) return;
 
-        // 检测前方是否有障碍物
-        if (IsObstacleAhead())
+        // 1️⃣ Handle Stair movement
+        if (onStair)
         {
-            direction *= -1; // 碰到障碍反转方向
-            return;          // 本帧不移动
+            // Apply continuous 45-degree upward movement
+            Vector3 stairDirection = (transform.forward + Vector3.up).normalized * 5f; // Adjust speed here
+            rb.velocity = stairDirection;
+            return; // Skip orbit logic while on stair
         }
 
-        // 限制最大速度
-        orbitSpeed = Mathf.Min(orbitSpeed, maxOrbitSpeed);
+        // 2️⃣ Handle normal wall collision reversal
+        if (collided)
+        {
+            direction *= -1;
+            collided = false;
+            return;
+        }
 
-        // 更新角度
-        currentAngle += direction * orbitSpeed * Time.fixedDeltaTime;
+        // 3️⃣ Normal orbit movement
+        float currentSpeed = Mathf.Min(orbitSpeed, maxOrbitSpeed);
+        currentAngle += direction * currentSpeed * Time.fixedDeltaTime;
 
-        // 计算新的位置（XZ平面）
         Vector3 offset = new Vector3(Mathf.Cos(currentAngle), 0, Mathf.Sin(currentAngle)) * radius;
         Vector3 targetXZ = stick.position + offset;
-        Vector3 targetPosition = new Vector3(targetXZ.x, rb.position.y, targetXZ.z);
 
-        // 移动刚体
-        rb.MovePosition(targetPosition);
+        float yVelocity = Mathf.Clamp(rb.velocity.y - fallSpeed * Time.fixedDeltaTime, -maxFallSpeed, maxFallSpeed);
 
-        // 朝向柱子中心
+        Vector3 moveDirection = (targetXZ - rb.position);
+        moveDirection.y = 0f;
+
+        rb.velocity = new Vector3(moveDirection.x / Time.fixedDeltaTime, yVelocity, moveDirection.z / Time.fixedDeltaTime);
+
+        // Face towards center
         Vector3 lookDir = (stick.position - transform.position);
         lookDir.y = 0f;
         if (lookDir != Vector3.zero)
@@ -66,15 +94,37 @@ public class PlayerOrbitWithGravityAndCollision : MonoBehaviour
         }
     }
 
-    // 发射射线检测障碍物
-    bool IsObstacleAhead()
+    void OnCollisionEnter(Collision collision)
     {
-        Vector3 origin = transform.position + Vector3.up * 0.5f;
-        Vector3 moveDir = Quaternion.Euler(0, direction * 10f, 0) * transform.forward;
+        // Wall side collision → reverse
+        if (collision.collider.CompareTag("Wall"))
+        {
+            foreach (ContactPoint contact in collision.contacts)
+            {
+                Vector3 normal = contact.normal;
+                if (Mathf.Abs(normal.y) < 0.5f)
+                {
+                    Debug.Log("Side collision with Wall, reversing direction!");
+                    collided = true;
+                    break;
+                }
+            }
+        }
+        // Stair → Start stair movement
+        else if (collision.collider.CompareTag("Stair"))
+        {
+            Debug.Log("Entered Stair");
+            onStair = true;
+        }
+    }
 
-        // 调试用射线（Scene视图可见）
-        Debug.DrawRay(origin, moveDir * obstacleRayDistance, Color.red);
-
-        return Physics.Raycast(origin, moveDir, obstacleRayDistance, obstacleLayers);
+    void OnCollisionExit(Collision collision)
+    {
+        // Left stair
+        if (collision.collider.CompareTag("Stair"))
+        {
+            Debug.Log("Exited Stair");
+            onStair = false;
+        }
     }
 }
