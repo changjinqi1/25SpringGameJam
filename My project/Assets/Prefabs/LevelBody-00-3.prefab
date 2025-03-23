@@ -2702,6 +2702,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Maopajia
       objectReference: {fileID: 0}
+    - target: {fileID: 3428037041498034144, guid: 2c45a9f8ac397354b9007b2bdf0dd51d, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8705555988187352676, guid: 2c45a9f8ac397354b9007b2bdf0dd51d, type: 3}
       propertyPath: m_LocalScale.x
       value: 1.2475
@@ -3806,19 +3810,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5660588834299263036, guid: 9d27868d6ffb6e7498ae9ab1cd6a0584, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.99753773
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5660588834299263036, guid: 9d27868d6ffb6e7498ae9ab1cd6a0584, type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0
+      value: -0.0701308
       objectReference: {fileID: 0}
     - target: {fileID: 5660588834299263036, guid: 9d27868d6ffb6e7498ae9ab1cd6a0584, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.07013231
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 5660588834299263036, guid: 9d27868d6ffb6e7498ae9ab1cd6a0584, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0
+      value: 0.99753785
       objectReference: {fileID: 0}
     - target: {fileID: 5660588834299263036, guid: 9d27868d6ffb6e7498ae9ab1cd6a0584, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -3830,7 +3834,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5660588834299263036, guid: 9d27868d6ffb6e7498ae9ab1cd6a0584, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
+      value: 180
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
