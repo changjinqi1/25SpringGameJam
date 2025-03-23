@@ -122,6 +122,7 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+<<<<<<< HEAD
 --- !u!4 &213977518 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1793403706767200131, guid: f47a39554e1ed3146ae2e083bc0c90f0, type: 3}
@@ -715,3 +716,9 @@ SceneRoots:
   - {fileID: 1670742209}
   - {fileID: 390920556}
   - {fileID: 814260566}
+=======
+--- !u!1660057539 &9223372036854775807
+SceneRoots:
+  m_ObjectHideFlags: 0
+  m_Roots: []
+>>>>>>> 08ee17a687988a5ec1a056c39b5e93093c451346
