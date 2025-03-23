@@ -97,8 +97,34 @@ public class TESTcollect : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (isFalling) return;
+        if (isFalling)
+        {
+            return;
+        }
 
+        // -----------------------------
+        // 👣 Raycast 检测脚下是否仍有平台
+        // -----------------------------
+        float raycastLength = playerBodyHeight + collectedYarnBalls.Count * 1f + 0.3f;
+        Vector3 rayOrigin = transform.position + Vector3.up * 0.1f; // 稍微抬高一点防止贴地问题
+
+        RaycastHit hit;
+        if (!Physics.Raycast(rayOrigin, Vector3.down, out hit, raycastLength))
+        {
+            isFalling = true;
+            currentPlatform = null;
+            Debug.DrawRay(rayOrigin, Vector3.down * raycastLength, Color.red);
+            Debug.Log("Lost ground support. Player is falling.");
+            return;
+        }
+        else
+        {
+            Debug.DrawRay(rayOrigin, Vector3.down * raycastLength, Color.green);
+        }
+
+        // -----------------------------
+        // 🧶 正常位置锁定在平台顶部 + 毛线球高度
+        // -----------------------------
         if (collectedYarnBalls.Count > 0)
         {
             float offsetY = collectedYarnBalls.Count * yarnHeight;
@@ -106,6 +132,7 @@ public class TESTcollect : MonoBehaviour
             rb.MovePosition(targetPosition);
         }
     }
+
 
     void CollectYarnBall(GameObject yarnBall)
     {
@@ -254,7 +281,18 @@ public class TESTcollect : MonoBehaviour
         Collider playerCollider = GetComponent<Collider>();
         if (playerCollider != null) playerCollider.enabled = true;
     }
+#if UNITY_EDITOR
+void OnDrawGizmos()
+{
+    if (!Application.isPlaying) return;
 
+    float raycastLength = playerBodyHeight + collectedYarnBalls.Count * 1f + 0.3f;
+    Vector3 rayOrigin = transform.position + Vector3.up * 0.1f;
+
+    Gizmos.color = Color.yellow;
+    Gizmos.DrawLine(rayOrigin, rayOrigin + Vector3.down * raycastLength);
+}
+#endif
 
     //int animator condition
     public int GetYarnBallCount()
