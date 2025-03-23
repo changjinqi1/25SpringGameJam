@@ -134,7 +134,7 @@ public class PlayerOrbit : MonoBehaviour
             foreach (ContactPoint contact in collision.contacts)
             {
                 Vector3 normal = contact.normal;
-                if (Mathf.Abs(normal.y) < 0.5f)
+                if (Mathf.Abs(normal.y) < 0.4f)
                 {
                     Debug.Log("Side collision with Wall, reversing direction!");
                     collided = true;

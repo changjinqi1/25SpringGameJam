@@ -1,6 +1,12 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:My project/Assets/ArtAsset.meta
+guid: 577bb8b38e67e234c85bf6efdaf333b5
+folderAsset: yes
+DefaultImporter:
+========
 guid: 49c0bf0cc019ab14c8ef3d2350863f0a
 PrefabImporter:
+>>>>>>>> 8c8642515821f761dee2254185c9936dd803433c:My project/Assets/Prefabs/Camera.prefab.meta
   externalObjects: {}
   userData: 
   assetBundleName: 
